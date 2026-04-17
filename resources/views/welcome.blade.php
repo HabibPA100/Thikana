@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Primary SEO Meta -->
+    <!-- Primary SEO Meta If-->
     <title>ঠিকানা | Thikana - Buy, Sell & Rent Property in Bangladesh</title>
     <meta name="title" content="ঠিকানা | Thikana - Buy, Sell & Rent Property in Bangladesh">
     <meta name="description" content="ঠিকানা (Thikana) বাংলাদেশের একটি আধুনিক রিয়েল এস্টেট প্ল্যাটফর্ম যেখানে আবাসিক, বাণিজ্যিক, জমি, অফিস, গুদামসহ সকল ধরনের প্রপার্টি ভাড়া বা বিক্রয় করা যায়।">
