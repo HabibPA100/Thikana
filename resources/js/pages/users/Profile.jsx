@@ -42,7 +42,7 @@ const Profile = () => {
         setImagePreview(
           safeUser.profile_image.startsWith("http")
             ? safeUser.profile_image
-            : `http://127.0.0.1:8000/storage/${safeUser.profile_image}`
+            : `https://habibpa.xyz/storage/${safeUser.profile_image}`
         );
       } else {
         setImagePreview(null);

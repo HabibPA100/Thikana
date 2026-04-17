@@ -70,7 +70,7 @@ const ShowMyPosts = () => {
 
     setPreview(
       post.cover_image
-        ? `http://127.0.0.1:8000/storage/${post.cover_image}`
+        ? `https://habibpa.xyz/storage/${post.cover_image}`
         : null
     );
 

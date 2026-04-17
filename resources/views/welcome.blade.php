@@ -54,7 +54,7 @@
     <link href="https://banglawebfonts.pages.dev/css/siyam-rupali.css" rel="stylesheet">
 
     @viteReactRefresh
-    @vite('resources/js/App.jsx')
+    @vite('resources/js/app.jsx')
 
     <style>
         body {

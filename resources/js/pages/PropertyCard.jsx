@@ -23,7 +23,7 @@ function PropertyCard({ post, handleContact }) {
           <div className="d-flex align-items-center">
             {profileImage ? (
               <img
-                src={`http://127.0.0.1:8000/storage/${profileImage}`}
+                src={`https://habibpa.xyz/storage/${profileImage}`}
                 className="rounded-circle me-2"
                 width="45"
                 height="45"
@@ -58,7 +58,7 @@ function PropertyCard({ post, handleContact }) {
       <img
         src={
           post.cover_image
-            ? `http://127.0.0.1:8000/storage/${post.cover_image}`
+            ? `https://habibpa.xyz/storage/${post.cover_image}`
             : "https://picsum.photos/600/350"
         }
         className="img-fluid"
