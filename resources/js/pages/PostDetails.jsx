@@ -51,7 +51,7 @@ const PostDetails = () => {
               <img
                 src={
                   user.profile_image
-                    ? `https://habibpa.xyz/storage/${user.profile_image}`
+                    ? `${import.meta.env.VITE_API_BASE}/storage/${user.profile_image}`
                     : "https://i.pravatar.cc/100"
                 }
                 className="rounded-circle me-2"
@@ -85,7 +85,7 @@ const PostDetails = () => {
           <img
             src={
               post.cover_image
-                ? `https://habibpa.xyz/storage/${post.cover_image}`
+                ? `${import.meta.env.VITE_API_BASE}/storage/${post.cover_image}`
                 : "https://picsum.photos/800/500"
             }
             className="img-fluid"

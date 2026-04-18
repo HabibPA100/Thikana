@@ -25,6 +25,11 @@ class HomeController extends Controller
             $query->where('sub_category_id', $request->sub_category_id);
         }
 
+        // 🔥 Purpose filter (NEW)
+        if ($request->purpose) {
+            $query->where('purpose', $request->purpose);
+        }
+
         // 🔍 Division
         if ($request->division) {
             $query->where('division', $request->division);
@@ -40,22 +45,39 @@ class HomeController extends Controller
             $query->where('area', 'LIKE', '%' . $request->area . '%');
         }
 
-        // 🔍 Price range (rent বা sell)
+        // 🔍 Price range (UPDATED 🔥)
         if ($request->min_price) {
             $query->where(function ($q) use ($request) {
-                $q->where('rent_amount', '>=', $request->min_price)
-                ->orWhere('sell_price', '>=', $request->min_price);
+
+                if ($request->purpose === 'rent') {
+                    $q->where('rent_amount', '>=', $request->min_price);
+                } elseif ($request->purpose === 'sell') {
+                    $q->where('sell_price', '>=', $request->min_price);
+                } else {
+                    // 👉 যদি purpose না থাকে → দুইটাই check
+                    $q->where('rent_amount', '>=', $request->min_price)
+                    ->orWhere('sell_price', '>=', $request->min_price);
+                }
+
             });
         }
 
         if ($request->max_price) {
             $query->where(function ($q) use ($request) {
-                $q->where('rent_amount', '<=', $request->max_price)
-                ->orWhere('sell_price', '<=', $request->max_price);
+
+                if ($request->purpose === 'rent') {
+                    $q->where('rent_amount', '<=', $request->max_price);
+                } elseif ($request->purpose === 'sell') {
+                    $q->where('sell_price', '<=', $request->max_price);
+                } else {
+                    $q->where('rent_amount', '<=', $request->max_price)
+                    ->orWhere('sell_price', '<=', $request->max_price);
+                }
+
             });
         }
 
-        // 🔍 Keyword (title / description)
+        // 🔍 Keyword
         if ($request->keyword) {
             $query->where(function ($q) use ($request) {
                 $q->where('title', 'LIKE', '%' . $request->keyword . '%')
@@ -63,7 +85,7 @@ class HomeController extends Controller
             });
         }
 
-        // 🔥 Only Active Properties
+        // 🔥 Final result
         $properties = $query->active()->latest()->paginate(10);
 
         return response()->json($properties);

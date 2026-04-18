@@ -70,7 +70,7 @@ const ShowMyPosts = () => {
 
     setPreview(
       post.cover_image
-        ? `https://habibpa.xyz/storage/${post.cover_image}`
+        ? `${import.meta.env.VITE_API_BASE}/storage/${post.cover_image}`
         : null
     );
 

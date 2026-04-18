@@ -13,7 +13,7 @@ try {
 const token = localStorage.getItem("token");
 
 await axios.post(
-"https://habibpa.xyz/api/logout",
+"api/logout",
 {},
 {
 headers:{

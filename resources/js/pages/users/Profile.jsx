@@ -42,7 +42,7 @@ const Profile = () => {
         setImagePreview(
           safeUser.profile_image.startsWith("http")
             ? safeUser.profile_image
-            : `https://habibpa.xyz/storage/${safeUser.profile_image}`
+            : `${import.meta.env.VITE_API_BASE}/storage/${safeUser.profile_image}`
         );
       } else {
         setImagePreview(null);

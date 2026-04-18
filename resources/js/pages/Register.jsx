@@ -37,7 +37,7 @@ const Register = () => {
       }
 
       // Use full URL for API
-      await axios.post("https://habibpa.xyz/api/register", data, {
+      await axios.post("api/register", data, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

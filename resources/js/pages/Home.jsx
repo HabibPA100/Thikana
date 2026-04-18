@@ -5,6 +5,17 @@ import AppLayout from "../layouts/AppLayout";
 
 const Home = () => {
 
+   const [filters, setFilters] = useState({
+      keyword: "",
+      category_id: "",
+      sub_category_id: "",
+      division: "",
+      district: "",
+      area: "",
+      min_price: "",
+      max_price: "",
+    });
+
   const [showContact, setShowContact] = useState(false);
   const [contactPost, setContactPost] = useState(null);
   const [request, setRequest] = useState([]);
@@ -12,15 +23,26 @@ const Home = () => {
 
   const [posts, setPosts] = useState([]);
 
+  // ✅ initial load = all posts
   useEffect(() => {
-    fetchPosts();
+    fetchFilteredPosts();
   }, []);
 
-  const fetchPosts = async () => {
-    try {
-      const res = await axios.get("/api/show-post");
+  // ✅ auto filter (debounce)
+  useEffect(() => {
+    const delay = setTimeout(() => {
+      fetchFilteredPosts();
+    }, 500);
 
-      setRequest(res.data);
+    return () => clearTimeout(delay);
+  }, [filters]);
+
+  const fetchFilteredPosts = async (customFilters = filters) => {
+    try {
+      const res = await axios.get("/api/search", {
+        params: customFilters,
+      });
+
       setPosts(res.data.data);
     } catch (error) {
       console.error(error);
@@ -74,15 +96,115 @@ const Home = () => {
 
           {/* Left Sidebar */}
           <div className="col-lg-3 d-none d-lg-block">
-            <div className="card shadow-sm border-0 mb-3">
-              <div className="card-body">
-                <h5 className="fw-bold mb-3">🏠 Rent Categories</h5>
-                <ul className="list-group list-group-flush">
-                  <li className="list-group-item border-0">Family House</li>
-                  <li className="list-group-item border-0">Bachelor Room</li>
-                  <li className="list-group-item border-0">Sublet</li>
-                  <li className="list-group-item border-0">Office Space</li>
-                </ul>
+            <div className="card border-0 shadow-lg rounded-4 overflow-hidden">
+              
+              {/* Header */}
+              <div className="bg-primary text-white p-3 fw-semibold">
+                🔍 Filter Properties
+              </div>
+
+              <div className="card-body p-4">
+
+                {/* Location Section */}
+                <h6 className="text-muted mb-3">Location</h6>
+
+                <input
+                  type="text"
+                  placeholder="🏙️ Division"
+                  className="form-control mb-3 rounded-3 shadow-sm"
+                  value={filters.division}
+                  onChange={(e) =>
+                    setFilters({ ...filters, division: e.target.value })
+                  }
+                />
+
+                <input
+                  type="text"
+                  placeholder="📍 District"
+                  className="form-control mb-3 rounded-3 shadow-sm"
+                  value={filters.district}
+                  onChange={(e) =>
+                    setFilters({ ...filters, district: e.target.value })
+                  }
+                />
+
+                <input
+                  type="text"
+                  placeholder="📌 Area"
+                  className="form-control mb-4 rounded-3 shadow-sm"
+                  value={filters.area}
+                  onChange={(e) =>
+                    setFilters({ ...filters, area: e.target.value })
+                  }
+                />
+
+                {/* Price Section */}
+                <h6 className="text-muted mb-3">Price Range</h6>
+
+                <div className="d-flex gap-2 mb-4">
+                  <input
+                    type="number"
+                    placeholder="Min ৳"
+                    className="form-control rounded-3 shadow-sm"
+                    value={filters.min_price}
+                    onChange={(e) =>
+                      setFilters({ ...filters, min_price: e.target.value })
+                    }
+                  />
+
+                  <input
+                    type="number"
+                    placeholder="Max ৳"
+                    className="form-control rounded-3 shadow-sm"
+                    value={filters.max_price}
+                    onChange={(e) =>
+                      setFilters({ ...filters, max_price: e.target.value })
+                    }
+                  />
+                </div>
+
+                {/* Purpose */}
+                <h6 className="text-muted mb-3">Purpose</h6>
+
+                <select
+                  className="form-select mb-4 rounded-3 shadow-sm"
+                  value={filters.purpose}
+                  onChange={(e) =>
+                    setFilters({ ...filters, purpose: e.target.value })
+                  }
+                >
+                  <option value="">Select Purpose</option>
+                  <option value="rent">🏠 For Rent</option>
+                  <option value="sell">💰 For Sale</option>
+                </select>
+
+                {/* Buttons */}
+                <div className="d-flex gap-2">
+                  <button
+                    className="btn btn-primary w-100 rounded-3 fw-semibold"
+                  >
+                    Apply
+                  </button>
+
+                  <button
+                    className="btn btn-light border w-100 rounded-3 fw-semibold"
+                    onClick={() => {
+                      const reset = {
+                        division: "",
+                        district: "",
+                        area: "",
+                        min_price: "",
+                        max_price: "",
+                        purpose: "",
+                      };
+                      setFilters(reset);
+                      fetchFilteredPosts(reset);
+                    }}
+                  >
+                    Reset
+                  </button>
+                </div>
+
               </div>
             </div>
           </div>
@@ -128,7 +250,7 @@ const Home = () => {
                       <div className="d-flex align-items-center">
                         {profileImage ? (
                           <img
-                            src={`https://habibpa.xyz/storage/${profileImage}`}
+                            src={`${import.meta.env.VITE_API_BASE}/storage/${profileImage}`}
                             className="rounded-circle me-2"
                             width="45"
                             height="45"
@@ -165,7 +287,7 @@ const Home = () => {
                   <img
                     src={
                       post.cover_image
-                        ? `https://habibpa.xyz/storage/${post.cover_image}`
+                        ? `${import.meta.env.VITE_API_BASE}/storage/${post.cover_image}`
                         : "https://picsum.photos/600/350"
                     }
                     className="img-fluid"
@@ -288,18 +410,98 @@ const Home = () => {
 
           {/* Right Sidebar */}
           <div className="col-lg-3 d-none d-lg-block">
-            <div className="card shadow-sm border-0">
-              <div className="card-body">
-                <h6 className="fw-bold">🔥 Featured Listings</h6>
+            <div className="card border-0 shadow-lg rounded-4 overflow-hidden">
 
-                <div className="mt-3">
-                  <h6 className="mb-0">Uttara Flat</h6>
-                  <small className="text-muted">৳18,000/month</small>
-                </div>
+              {/* Header */}
+              <div
+                className="text-white fw-semibold p-3"
+                style={{
+                  background: "linear-gradient(135deg, #667eea, #764ba2)"
+                }}
+              >
+                📊 Explore
+              </div>
 
-                <div className="mt-3">
-                  <h6 className="mb-0">Bashundhara Studio</h6>
-                  <small className="text-muted">৳10,000/month</small>
+              <div className="card-body p-3">
+
+                {/* Featured Listings */}
+                <h6 className="fw-bold mb-3">🔥 Featured Listings</h6>
+
+                {posts.slice(0, 3).map((item) => (
+                  <div
+                    key={item.id}
+                    className="d-flex gap-2 mb-3 align-items-center sidebar-item"
+                    style={{ cursor: "pointer" }}
+                  >
+                    <img
+                      src={
+                        item.cover_image
+                          ? `${import.meta.env.VITE_API_BASE}/storage/${item.cover_image}`
+                          : "https://picsum.photos/100"
+                      }
+                      className="rounded-3"
+                      style={{
+                        width: 70,
+                        height: 70,
+                        objectFit: "cover"
+                      }}
+                    />
+
+                    <div className="flex-grow-1">
+                      <h6 className="mb-1 small fw-semibold text-dark">
+                        {item.title.length > 40
+                          ? item.title.slice(0, 40) + "..."
+                          : item.title}
+                      </h6>
+                      <small className="text-primary fw-semibold">
+                        ৳ {item.rent_amount || item.sell_price}
+                      </small>
+                    </div>
+                  </div>
+                ))}
+
+                {/* Divider */}
+                <hr className="my-3" />
+
+                {/* Quick Actions */}
+                <h6 className="fw-bold mb-3">⚡ Quick Actions</h6>
+
+                <button
+                  className="btn w-100 text-white fw-semibold rounded-3 mb-2"
+                  style={{
+                    background: "linear-gradient(135deg, #43e97b, #38f9d7)",
+                    border: "none"
+                  }}
+                  onClick={handleCreatePostClick}
+                >
+                  ➕ Post Property
+                </button>
+
+                {/* <button
+                  className="btn btn-light border w-100 rounded-3 fw-semibold"
+                >
+                  ❤️ Saved Listings
+                </button> */}
+
+                {/* Divider */}
+                <hr className="my-3" />
+
+                {/* Popular Areas */}
+                <h6 className="fw-bold mb-3">📍 Popular Areas</h6>
+
+                <div className="d-flex flex-wrap gap-2">
+                  {["Uttara", "Mirpur", "Dhanmondi", "Bashundhara","Gopalgonj"].map((area) => (
+                    <span
+                      key={area}
+                      className="badge rounded-pill bg-light text-dark border px-3 py-2 area-chip"
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        setFilters({ ...filters, area: area })
+                      }
+                    >
+                      📌 {area}
+                    </span>
+                  ))}
                 </div>
 
               </div>

@@ -107,7 +107,7 @@ const Dashboard = () => {
                           {/* IMAGE */}
                           {item.cover_image && (
                             <img
-                              src={`https://habibpa.xyz/storage/${item.cover_image}`}
+                              src={`${import.meta.env.VITE_API_BASE}/storage/${item.cover_image}`}
                               className="card-img-top"
                               style={{ height: "200px", objectFit: "cover" }}
                               alt="property"
@@ -123,7 +123,7 @@ const Dashboard = () => {
 
                                 {item.user?.profile_image ? (
                                   <img
-                                    src={`https://habibpa.xyz/storage/${item.user.profile_image}`}
+                                    src={`${import.meta.env.VITE_API_BASE}/storage/${item.user.profile_image}`}
                                     className="rounded-circle"
                                     width="40"
                                     height="40"
