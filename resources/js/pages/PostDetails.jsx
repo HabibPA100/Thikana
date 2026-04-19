@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate, Link  } from "react-router-dom";
 import axios from "axios";
 import AppLayout from "../layouts/AppLayout";
 
 const PostDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [request, setRequest] = useState([]);
+  const [showContact, setShowContact] = useState(false);
+  const [contactPost, setContactPost] = useState(null);
   const [post, setPost] = useState(null);
 
   useEffect(() => {
@@ -21,6 +24,25 @@ const PostDetails = () => {
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const handleContact = () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    setContactPost(post);
+    setShowContact(true);
+  };
+
+  const maskPhone = (phone) => {
+    if (!phone) return "";
+    
+    const visible = phone.slice(0, -4);
+    return visible + "****";
   };
 
   if (!post) {
@@ -169,18 +191,70 @@ const PostDetails = () => {
           {/* FOOTER */}
           <div className="border-top p-3 d-flex gap-2">
 
-            <button className="btn btn-primary w-50 rounded-pill">
+            <button className="btn btn-primary w-50 rounded-pill"
+            onClick={() => handleContact(post)}
+            >
               📞 Contact Owner
             </button>
 
-            <button className="btn btn-outline-secondary w-50 rounded-pill">
-              ❤️ Save
-            </button>
+            <Link
+                to="/"
+                className="btn btn-outline-secondary w-50 rounded-pill d-flex align-items-center justify-content-center gap-2 shadow-sm"
+              >
+              ⬅️ Go Back
+            </Link>
 
           </div>
 
         </div>
 
+        {showContact && (
+            <div className="modal fade show d-block">
+              <div className="modal-dialog modal-dialog-centered">
+                <div className="modal-content rounded-4 border-0 shadow">
+
+                  <div className="modal-header">
+                    <h5 className="modal-title">📞 Contact Information</h5>
+                    <button 
+                      className="btn-close"
+                      onClick={() => setShowContact(false)}
+                    ></button>
+                  </div>
+
+                  <div className="modal-body text-center">
+
+                    <h5 className="fw-bold">
+                      {contactPost?.contact_name}
+                    </h5>
+
+                   <div className="text-center mb-3">
+                      <h6 className="text-muted">
+                        📞 {maskPhone(contactPost?.contact_phone)}
+                      </h6>
+                    </div>
+
+                    <a 
+                      href={`tel:${contactPost?.contact_phone}`}
+                      className="btn btn-success w-100 mt-3 rounded-pill"
+                    >
+                      📞 Call Now
+                    </a>
+
+                  </div>
+
+                  <div className="modal-footer">
+                    <button 
+                      className="btn btn-secondary"
+                      onClick={() => setShowContact(false)}
+                    >
+                      Close
+                    </button>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          )}
       </div>
     </AppLayout>
   );

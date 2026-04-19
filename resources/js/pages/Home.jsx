@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useRef , useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import AppLayout from "../layouts/AppLayout";
@@ -22,32 +22,83 @@ const Home = () => {
   const navigate = useNavigate();
 
   const [posts, setPosts] = useState([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
+
+  const observerRef = useRef(null);
 
   // ✅ initial load = all posts
   useEffect(() => {
-    fetchFilteredPosts();
+    fetchFilteredPosts(1);
   }, []);
 
   // ✅ auto filter (debounce)
   useEffect(() => {
     const delay = setTimeout(() => {
-      fetchFilteredPosts();
+      setPage(1);
+      fetchFilteredPosts(1);
     }, 500);
 
     return () => clearTimeout(delay);
   }, [filters]);
 
-  const fetchFilteredPosts = async (customFilters = filters) => {
+  const fetchFilteredPosts = async (pageNumber = 1, customFilters = filters) => {
+    if (loading) return;
+
+    setLoading(true);
+
     try {
       const res = await axios.get("/api/search", {
-        params: customFilters,
+        params: {
+          ...customFilters,
+          page: pageNumber,
+        },
       });
 
-      setPosts(res.data.data);
-    } catch (error) {
-      console.error(error);
+      const newPosts = res.data.data;
+
+      if (pageNumber === 1) {
+        setPosts(newPosts);
+      } else {
+        setPosts((prev) => [...prev, ...newPosts]);
+      }
+
+      setHasMore(res.data.next_page_url !== null);
+    } catch (err) {
+      console.error(err);
     }
+
+    setLoading(false);
   };
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loading) {
+          const nextPage = page + 1;
+          setPage(nextPage);
+          fetchFilteredPosts(nextPage);
+        }
+      },
+      {
+        root: null,
+        rootMargin: "100px",
+        threshold: 0,
+      }
+    );
+
+    if (observerRef.current) {
+      observer.observe(observerRef.current);
+    }
+
+    return () => {
+      if (observerRef.current) {
+        observer.unobserve(observerRef.current);
+      }
+    };
+  }, [page, hasMore, loading]);
+
 
   const formatDateBD = (dateString) => {
     const date = new Date(dateString);
@@ -182,6 +233,7 @@ const Home = () => {
                 <div className="d-flex gap-2">
                   <button
                     className="btn btn-primary w-100 rounded-3 fw-semibold"
+                    onClick={() => fetchFilteredPosts(filters)}
                   >
                     Apply
                   </button>
@@ -190,12 +242,14 @@ const Home = () => {
                     className="btn btn-light border w-100 rounded-3 fw-semibold"
                     onClick={() => {
                       const reset = {
+                        keyword: "",
+                        category_id: "",
+                        sub_category_id: "",
                         division: "",
                         district: "",
                         area: "",
                         min_price: "",
                         max_price: "",
-                        purpose: "",
                       };
                       setFilters(reset);
                       fetchFilteredPosts(reset);
@@ -234,7 +288,7 @@ const Home = () => {
             </div>
 
             {/* Posts */}
-            {posts.map((post) => {
+            {posts?.map((post) => {
               const user = post.user || {};
               const userName = user.name || "Unknown User";
               const profileImage = user.profile_image;
@@ -427,9 +481,10 @@ const Home = () => {
                 {/* Featured Listings */}
                 <h6 className="fw-bold mb-3">🔥 Featured Listings</h6>
 
-                {posts.slice(0, 3).map((item) => (
+                {posts?.slice(0, 3).map((item) => (
                   <div
                     key={item.id}
+                    onClick={() => navigate(`/post/${item.id}`)}
                     className="d-flex gap-2 mb-3 align-items-center sidebar-item"
                     style={{ cursor: "pointer" }}
                   >
@@ -495,9 +550,11 @@ const Home = () => {
                       key={area}
                       className="badge rounded-pill bg-light text-dark border px-3 py-2 area-chip"
                       style={{ cursor: "pointer" }}
-                      onClick={() =>
-                        setFilters({ ...filters, area: area })
-                      }
+                      onClick={() => {
+                        const updated = { ...filters, area };
+                        setFilters(updated);
+                        fetchFilteredPosts(updated);
+                      }}
                     >
                       📌 {area}
                     </span>
@@ -507,6 +564,13 @@ const Home = () => {
               </div>
             </div>
           </div>
+  
+          {loading && (
+            <div className="text-center my-3">
+              <span className="spinner-border"></span>
+            </div>
+          )}
+          <div ref={observerRef}></div>
 
         </div>
       </div>
