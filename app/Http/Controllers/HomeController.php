@@ -11,7 +11,21 @@ class HomeController extends Controller
 
     public function search(Request $request)
     {
-        $query = Property::query()->with(['user','subCategory.category']);
+        $query = Property::query()
+            ->with(['user','subCategory.category','promotionPlan'])
+            ->leftJoin('promotion_plans', 'properties.promotion_plan_id', '=', 'promotion_plans.id');
+
+        // 🔥 Only active property + active user
+        $query->where('properties.status', 'Active')
+            ->whereHas('user', function ($q) {
+                $q->where('status', 'active');
+            });
+
+        // 🔥 Promotion valid check
+        $query->where(function ($q) {
+            $q->whereNull('promotion_expires_at')
+            ->orWhere('promotion_expires_at', '>=', now());
+        });
 
         // 🔍 Category filter
         if ($request->category_id) {
@@ -20,32 +34,30 @@ class HomeController extends Controller
             });
         }
 
-        // 🔍 SubCategory filter
+        // 🔍 SubCategory
         if ($request->sub_category_id) {
             $query->where('sub_category_id', $request->sub_category_id);
         }
 
-        // 🔥 Purpose filter (NEW)
+        // 🔥 Purpose
         if ($request->purpose) {
             $query->where('purpose', $request->purpose);
         }
 
-        // 🔍 Division
+        // 🔍 Location
         if ($request->division) {
             $query->where('division', $request->division);
         }
 
-        // 🔍 District
         if ($request->district) {
             $query->where('district', $request->district);
         }
 
-        // 🔍 Area
         if ($request->area) {
             $query->where('area', 'LIKE', '%' . $request->area . '%');
         }
 
-        // 🔍 Price range (UPDATED 🔥)
+        // 🔍 Price
         if ($request->min_price) {
             $query->where(function ($q) use ($request) {
 
@@ -54,7 +66,6 @@ class HomeController extends Controller
                 } elseif ($request->purpose === 'sell') {
                     $q->where('sell_price', '>=', $request->min_price);
                 } else {
-                    // 👉 যদি purpose না থাকে → দুইটাই check
                     $q->where('rent_amount', '>=', $request->min_price)
                     ->orWhere('sell_price', '>=', $request->min_price);
                 }
@@ -85,8 +96,14 @@ class HomeController extends Controller
             });
         }
 
-        // 🔥 Final result
-        $properties = $query->active()->latest()->paginate(10);
+        // 🔥 SORTING (MOST IMPORTANT)
+        $query->orderByRaw('promotion_plans.priority IS NULL') // promoted first
+            ->orderBy('promotion_plans.priority', 'asc')      // priority order
+            ->orderBy('properties.promotion_expires_at', 'desc') // latest promo
+            ->orderBy('properties.created_at', 'desc'); // normal latest
+
+        // 🔥 select only properties (important)
+        $properties = $query->select('properties.*')->paginate(10);
 
         return response()->json($properties);
     }
