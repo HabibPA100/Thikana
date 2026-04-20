@@ -31,14 +31,15 @@ const UserDetails = () => {
             <div className="card-header bg-white d-flex align-items-center">
             <img
                 src={
-                user.profile_image ||
-                "https://i.pravatar.cc/150?img=3"
+                  user.profile_image && user.profile_image !== "null"
+                    ? `${import.meta.env.VITE_API_BASE}/storage/${user.profile_image}`
+                    : "https://i.pravatar.cc/150?img=3"
                 }
                 alt="profile"
                 className="rounded-circle me-3"
                 width="50"
                 height="50"
-            />
+              />
             <div>
                 <h6 className="mb-0">{user.name}</h6>
                 <small className="text-muted">{user.user_name}</small>

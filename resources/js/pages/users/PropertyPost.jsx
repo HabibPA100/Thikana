@@ -7,6 +7,7 @@ import DashboardLayout from "../../layouts/DashboardLayout";
 const PropertyPost = () => {
 
   const navigate = useNavigate();
+  const [errors, setErrors] = useState({});
   const fileRef = useRef();
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
@@ -78,6 +79,12 @@ const PropertyPost = () => {
   const handleChange = (e) => {
     const { name, value, files } = e.target;
 
+      setErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+
+
     if (name === "cover_image") {
       const file = files[0];
       setForm({ ...form, cover_image: file });
@@ -95,8 +102,47 @@ const PropertyPost = () => {
     );
   };
 
+  const validate = () => {
+      let newErrors = {};
+
+      if (!form.category_id) newErrors.category_id = "ক্যাটাগরি নির্বাচন করুন";
+      if (!form.sub_category_id) newErrors.sub_category_id = "সাব ক্যাটাগরি নির্বাচন করুন";
+      if (!form.title) newErrors.title = "শিরোনাম লিখুন";
+
+      if (form.purpose === "rent" && !form.rent_amount) {
+        newErrors.rent_amount = "ভাড়ার পরিমাণ দিন";
+      }
+
+      if (form.purpose === "sell" && !form.sell_price) {
+        newErrors.sell_price = "বিক্রয় মূল্য দিন";
+      }
+
+      if (!form.division) newErrors.division = "বিভাগ লিখুন";
+      if (!form.district) newErrors.district = "জেলা লিখুন";
+      if (!form.area) newErrors.area = "এলাকা লিখুন";
+      if (!form.address) newErrors.address = "ঠিকানা লিখুন";
+
+      if (!form.contact_name) newErrors.contact_name = "নাম দিন";
+      if (!form.contact_phone) newErrors.contact_phone = "মোবাইল নাম্বার দিন";
+
+      if (!form.cover_image) {
+        newErrors.cover_image = "প্রোপার্টির ছবি দেওয়া বাধ্যতামূলক";
+      } else if (!form.cover_image.type.startsWith("image/")) {
+        newErrors.cover_image = "শুধু image ফাইল দিন";
+      } else if (form.cover_image.size > 2 * 1024 * 1024) {
+        newErrors.cover_image = "ছবি 2MB এর কম হতে হবে";
+      }
+
+      setErrors(newErrors);
+
+      return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validate()) return;
+
     setLoadingSubmit(true);
 
     try {
@@ -160,6 +206,7 @@ const PropertyPost = () => {
                       </option>
                     ))}
                   </select>
+                  {errors.category_id && <small className="text-danger">{errors.category_id}</small>}
                 </div>
 
                 <div className="col-md-6">
@@ -177,6 +224,7 @@ const PropertyPost = () => {
                       </option>
                     ))}
                   </select>
+                  {errors.sub_category_id && <small className="text-danger">{errors.sub_category_id}</small>}
                 </div>
 
                 <div className="col-md-6">
@@ -188,6 +236,7 @@ const PropertyPost = () => {
                     value={form.title}
                     onChange={handleChange}
                   />
+                  {errors.title && <small className="text-danger">{errors.title}</small>}
                 </div>
 
                 <div className="col-md-6">
@@ -214,6 +263,7 @@ const PropertyPost = () => {
                       value={form.rent_amount}
                       onChange={handleChange}
                     />
+                    {errors.rent_amount && <small className="text-danger">{errors.rent_amount}</small>}
                   </div>
                 )}
 
@@ -228,6 +278,7 @@ const PropertyPost = () => {
                       value={form.sell_price}
                       onChange={handleChange}
                     />
+                    {errors.sell_price && <small className="text-danger">{errors.sell_price}</small>}
                   </div>
                 )}
 
@@ -236,22 +287,27 @@ const PropertyPost = () => {
                 </div>
                 <div className="col-md-4">
                   <input name="division" className="form-control" placeholder="বিভাগ" value={form.division} onChange={handleChange} />
+                  {errors.division && <small className="text-danger">{errors.division}</small>}
                 </div>
 
                 <div className="col-md-4">
                   <input name="district" className="form-control" placeholder="জেলা" value={form.district} onChange={handleChange} />
+                  {errors.district && <small className="text-danger">{errors.district}</small>}
                 </div>
 
                 <div className="col-md-4">
                   <input name="area" className="form-control" placeholder="এলাকা" value={form.area} onChange={handleChange} />
+                  {errors.area && <small className="text-danger">{errors.area}</small>}
                 </div>
 
                 <div className="col-12">
                   <input name="address" className="form-control" placeholder="ঠিকানা" value={form.address} onChange={handleChange} />
+                  {errors.address && <small className="text-danger">{errors.address}</small>}
                 </div>
 
                 <div className="col-md-4">
                   <input name="contact_name" className="form-control" placeholder="নাম" value={form.contact_name} onChange={handleChange} />
+                   {errors.contact_name && <small className="text-danger">{errors.contact_name}</small>}
                 </div>
 
                 <div className="col-md-4">
@@ -265,10 +321,10 @@ const PropertyPost = () => {
                       pattern="[0-9]{10,15}"
                       maxLength={15}
                       minLength={10}
-                      required
                       data-bs-toggle="tooltip"
                       title="10 থেকে 15 ডিজিটের নাম্বার দিন 018**"
                     />
+                    {errors.contact_phone && <small className="text-danger">{errors.contact_phone}</small>}
                 </div>
 
                 <div className="col-md-4">
@@ -279,6 +335,7 @@ const PropertyPost = () => {
                   <label htmlFor="cover_image">আপনার প্রোপার্টির ছবি দিন।</label>
                   <input type="file" name="cover_image" className="form-control" ref={fileRef} onChange={handleChange} />
                   {preview && <img src={preview} width="120" className="mt-2" />}
+                   {errors.cover_image && <small className="text-danger">{errors.cover_image}</small>}
                 </div>
 
                <div className="col-12">
@@ -308,8 +365,15 @@ const PropertyPost = () => {
                 ))}
 
                 <div className="col-12 text-end">
-                  <button className="btn btn-success">
-                    {loadingSubmit ? "পোস্ট হচ্ছে..." : "পোস্ট করুন"}
+                  <button className="btn btn-success" disabled={loadingSubmit}>
+                    {loadingSubmit ? (
+                      <>
+                        <span className="spinner-border spinner-border-sm me-2"></span>
+                        পোস্ট হচ্ছে...
+                      </>
+                    ) : (
+                      "পোস্ট করুন"
+                    )}
                   </button>
                 </div>
 
