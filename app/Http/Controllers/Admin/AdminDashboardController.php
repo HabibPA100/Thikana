@@ -48,6 +48,25 @@ class AdminDashboardController extends Controller
         ]);
     }
 
+    public function pendingRequest()
+    {
+        $pendingReq = PostPromotionRequest::where('status', 'pending')->count();
+
+        return response()->json([
+            'pending_request' => $pendingReq
+        ]);
+    }
+
+    public function upgradeRequests()
+    {
+        $requests = PostPromotionRequest::latest()->get();
+
+        return response()->json([
+            'requests' => $requests
+        ]);
+    }
+
+
     public function revenue()
     {
         $totalRevenue = PostPromotionRequest::where('status', 'approved')
@@ -57,6 +76,18 @@ class AdminDashboardController extends Controller
             'revenue' => $totalRevenue
         ]);
     }
+
+    public function approvedRevenueList()
+    {
+        $posts = PostPromotionRequest::where('status', 'approved')
+                    ->latest()
+                    ->get();
+
+        return response()->json([
+            'posts' => $posts
+        ]);
+    }
+
 
     public function latestUsers()
     {
@@ -70,6 +101,23 @@ class AdminDashboardController extends Controller
         $users = User::latest()->get();
 
         return response()->json($users);
+    }
+
+    public function inactiveUsersCount()
+    {
+        $penUserCount = User::where('status', '!=', 'active')->count();
+
+        return response()->json([
+            'inactive_users' => $penUserCount]);
+    }
+
+    public function inactiveUsers()
+    {
+        $inactiveUsers = User::where('status', '!=', 'active')
+                    ->latest()
+                    ->get();
+
+        return response()->json($inactiveUsers);
     }
 
     public function showDetails($id)

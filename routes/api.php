@@ -46,9 +46,14 @@ Route::middleware('auth:sanctum', 'role:admin')->group(function () {
         // USER INFO 
         Route::get('/message/count', [AdminDashboardController::class, 'messageCount']);
         Route::get('/users/count', [AdminDashboardController::class, 'userCount']);
+        Route::get('/inactive-users/count', [AdminDashboardController::class, 'inactiveUsersCount']);
+        Route::get('/inactive-users', [AdminDashboardController::class, 'inactiveUsers']);
         Route::get('/property/count', [AdminDashboardController::class, 'propertyCount']);
         Route::get('/upgrade-plan/count', [AdminDashboardController::class, 'planCount']);
+        Route::get('/pending-req/count', [AdminDashboardController::class, 'pendingRequest']);
+        Route::get('/upgrade/requests-list', [AdminDashboardController::class, 'upgradeRequests']);
         Route::get('/revenue', [AdminDashboardController::class, 'revenue']);
+        Route::get('/approved-revenue', [AdminDashboardController::class, 'approvedRevenueList']);
         Route::get('/users/latest', [AdminDashboardController::class, 'latestUsers']);
         Route::get('/users', [AdminDashboardController::class, 'users']);
         Route::get('/users/{id}/details', [AdminDashboardController::class, 'showDetails']);

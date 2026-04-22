@@ -19,6 +19,7 @@ import ShowMyPost from './pages/users/ShowMyPost'
 import UpgradePostWrapper from './pages/users/UpgradePostWrapper'
 import AdminUsersInfo from './pages/admin/AdminUsersInfo'
 import UserDetails from './pages/admin/UserDetails'
+import InactiveUsers from './pages/admin/InactiveUsers'
 import AdminProperties from './pages/admin/AdminProperties'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import PromotionPlan from './pages/admin/PromotionPlan'
@@ -26,6 +27,8 @@ import ManageCategory from './pages/admin/ManageCategory'
 import ManageAttribute from './pages/admin/ManageAttribute'
 import ManageSubCategory from './pages/admin/ManageSubCategory'
 import ManageSubCategoryAttribute from './pages/admin/ManageSubCategoryAttribute'
+import UpgradeRequestList from './pages/admin/UpgradeRequestList'
+import RevenueList from './pages/admin/RevenueList'
 import PostPromotionApproval from './pages/admin/PostPromotionApproval'
 import AdminMessages from './pages/admin/AdminMessages'
 import Admin from "./pages/Admin";
@@ -76,6 +79,12 @@ return(
 </ProtectedRoute>
 } />
 
+<Route path="/admin/inactive-users" element={
+<ProtectedRoute role="admin">
+<InactiveUsers/>
+</ProtectedRoute>
+} />
+
 <Route path="/admin/users/:id/details" element={
 <ProtectedRoute role="admin">
 <UserDetails/>
@@ -121,6 +130,18 @@ return(
 <Route path="/manage/sub-category/attribute" element={
 <ProtectedRoute role="admin">
 <ManageSubCategoryAttribute/>
+</ProtectedRoute>
+} />
+
+<Route path="/admin/upgrade-requests" element={
+<ProtectedRoute role="admin">
+<UpgradeRequestList/>
+</ProtectedRoute>
+} />
+
+<Route path="/admin/revenue-list" element={
+<ProtectedRoute role="admin">
+<RevenueList/>
 </ProtectedRoute>
 } />
 

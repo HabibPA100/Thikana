@@ -44,35 +44,47 @@ export default function Login() {
   }
 };
 
-  return (
-    <div className="container d-flex justify-content-center align-items-center vh-100">
+ return (
+    <div className="container d-flex justify-content-center align-items-center vh-100 bg-light">
       <div className="col-md-4">
+
         <div className="card shadow-lg border-0 rounded-4">
           <div className="card-body p-4">
 
-            <h3 className="text-center mb-4">Login</h3>
+            {/* Header */}
+            <div className="d-flex justify-content-between align-items-center mb-4">
+              <h3 className="m-0">Login</h3>
 
+              <Link
+                to="/"
+                className="btn btn-outline-secondary btn-sm rounded-pill px-3"
+              >
+                🏠 Home
+              </Link>
+            </div>
+
+            {/* Form */}
             <form onSubmit={submitForm}>
 
               <div className="mb-3">
                 <label className="form-label">Email / Username / Phone</label>
                 <input
-                    type="text"
-                    name="login"
-                    className="form-control"
-                    placeholder="Enter email, username or phone"
-                    value={form.login}
-                    onChange={handleChange}
-                    required
+                  type="text"
+                  name="login"
+                  className="form-control rounded-3"
+                  placeholder="Enter email, username or phone"
+                  value={form.login}
+                  onChange={handleChange}
+                  required
                 />
-                </div>
+              </div>
 
               <div className="mb-3">
                 <label className="form-label">Password</label>
                 <input
                   type="password"
                   name="password"
-                  className="form-control"
+                  className="form-control rounded-3"
                   placeholder="Enter password"
                   value={form.password}
                   onChange={handleChange}
@@ -80,29 +92,38 @@ export default function Login() {
                 />
               </div>
 
-              <div className="text-center m-4">
+              <div className="text-center mb-3">
                 <small>
-                  <Link to="/forgot-password">Forgot Password?</Link>
+                  <Link to="/forgot-password" className="text-decoration-none">
+                    Forgot Password?
+                  </Link>
                 </small>
               </div>
 
               <div className="d-grid">
-                <button type="submit" className="btn btn-primary rounded-3">
+                <button
+                  type="submit"
+                  className="btn btn-primary rounded-3 fw-semibold"
+                >
                   Login
                 </button>
               </div>
 
             </form>
 
-            <div className="text-center mt-3">
+            {/* Footer */}
+            <div className="text-center mt-4">
               <small>
                 Don't have an account?{" "}
-                <a href="/register">Register</a>
+                <Link to="/register" className="text-decoration-none fw-semibold">
+                  Register
+                </Link>
               </small>
             </div>
 
           </div>
         </div>
+
       </div>
     </div>
   );

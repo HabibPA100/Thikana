@@ -9,16 +9,20 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [totalMessage, setTotalMessage] = useState(0);
   const [totalUsers, setTotalUsers] = useState(0);
+  const [totalInActUsers, setTotalInActUsers] = useState(0);
   const [totalPropertyPost, setTotalPropertyPost] = useState(0);
   const [totalUpgradeRequest, setTotalUpgradeRequest] = useState(0);
   const [revenue, setRevenue] = useState(0);
+  const [totalPendingRequest, setPendingRequest] = useState(0);
   const [latestUsers, setLatestUsers] = useState([]);
 
   useEffect(() => {
     fetchMessageCount();
     fetchUserCount();
+    fetchInActUserCount();
     fetchPropertyCount();
     fetchUpgradePlanCount();
+    fetchPendingReqCount();
     fetchRevenue();
     fetchLatestUsers();
   }, []);
@@ -41,6 +45,15 @@ const Dashboard = () => {
     }
   };
 
+  const fetchInActUserCount = async () => {
+    try {
+      const res = await api.get("/admin/inactive-users/count");
+      setTotalInActUsers(res.data.inactive_users);
+    } catch (error) {
+      console.error(error.response?.data || error.message);
+    }
+  };
+
   const fetchPropertyCount = async () => {
     try {
       const res = await api.get("/admin/property/count");
@@ -54,6 +67,15 @@ const Dashboard = () => {
     try {
       const res = await api.get("/admin/upgrade-plan/count");
       setTotalUpgradeRequest(res.data.total_upgrade_request);
+    } catch (error) {
+      console.error(error.response?.data || error.message);
+    }
+  };
+
+  const fetchPendingReqCount = async () => {
+    try {
+      const res = await api.get("/admin/pending-req/count");
+      setPendingRequest(res.data.pending_request);
     } catch (error) {
       console.error(error.response?.data || error.message);
     }
@@ -107,7 +129,9 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="col-12 col-sm-6 col-lg-3">
+          <div className="col-12 col-sm-6 col-lg-3"
+                  onClick={() => navigate("/admin/users")}
+                  style={{ cursor: "pointer" }}>
             <div className="card text-white bg-primary shadow border-0 h-100">
               <div className="card-body">
                 <h6>Total Users</h6>
@@ -116,7 +140,20 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="col-12 col-sm-6 col-lg-3">
+          <div className="col-12 col-sm-6 col-lg-3"
+                  onClick={() => navigate("/admin/inactive-users")}
+                  style={{ cursor: "pointer" }}>
+            <div className="card text-white bg-secondary shadow border-0 h-100">
+              <div className="card-body">
+                <h6>Total InActive Users</h6>
+                 <h3>{totalInActUsers}</h3>
+              </div>
+            </div>
+          </div>
+
+          <div className="col-12 col-sm-6 col-lg-3"
+                  onClick={() => navigate("/admin/properties")}
+                  style={{ cursor: "pointer" }}>
             <div className="card text-white bg-success shadow border-0 h-100">
               <div className="card-body">
                 <h6>Total Property Post</h6>
@@ -126,7 +163,9 @@ const Dashboard = () => {
           </div>
 
           <div className="col-12 col-sm-6 col-lg-3">
-            <div className="card text-white bg-warning shadow border-0 h-100">
+            <div className="card text-white bg-warning shadow border-0 h-100"
+                  onClick={() => navigate("/admin/upgrade-requests")}
+                  style={{ cursor: "pointer" }}>
               <div className="card-body">
                 <h6> Total Upgrade Request</h6>
                 <h3>{totalUpgradeRequest}</h3>
@@ -135,9 +174,23 @@ const Dashboard = () => {
           </div>
 
           <div className="col-12 col-sm-6 col-lg-3">
-            <div className="card text-white bg-dark shadow border-0 h-100">
+            <div className="card text-white bg-info shadow border-0 h-100"
+                  onClick={() => navigate("/promotion/list")}
+                  style={{ cursor: "pointer" }}>
               <div className="card-body">
-                <h6>Revenue</h6>
+                <h6> Total Pending Request</h6>
+                <h3>{totalPendingRequest}</h3>
+              </div>
+            </div>
+          </div>
+
+          <div className="col-12 col-sm-6 col-lg-3">
+            <div className="card text-white bg-dark shadow border-0 h-100">
+              <div className="card-body"
+              onClick={() => navigate("/admin/revenue-list")}
+              style={{ cursor: "pointer" }}
+              >
+                <h6>Total Revenue</h6>
                 <h3>💸{revenue.toLocaleString()}</h3>
               </div>
             </div>
