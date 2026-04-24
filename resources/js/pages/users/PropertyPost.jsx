@@ -1,18 +1,21 @@
-import React, { useEffect, useState, useRef  } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import imageCompression from "browser-image-compression";
 import api from "../../api/axios";
-
 import DashboardLayout from "../../layouts/DashboardLayout";
 
 const PropertyPost = () => {
-
   const navigate = useNavigate();
+
   const [errors, setErrors] = useState({});
   const fileRef = useRef();
+
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
   const [attributes, setAttributes] = useState([]);
+
   const [preview, setPreview] = useState(null);
+  const [imageLoading, setImageLoading] = useState(false);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
 
   const initialForm = {
@@ -49,48 +52,105 @@ const PropertyPost = () => {
   };
 
   useEffect(() => {
-    if (!form.category_id) return;
+    if (!form.category_id) {
+      setSubCategories([]);
+      setForm((prev) => ({
+        ...prev,
+        sub_category_id: "",
+      }));
+      return;
+    }
 
-    const fetchSub = async () => {
-      const res = await api.get(`/categories/${form.category_id}/subcategories`);
-      setSubCategories(res.data);
+    const fetchSubCategories = async () => {
+      try {
+        const res = await api.get(
+          `/categories/${form.category_id}/subcategories`
+        );
+        setSubCategories(res.data);
+      } catch (err) {
+        console.error(err);
+      }
     };
 
-    fetchSub();
+    fetchSubCategories();
   }, [form.category_id]);
 
   useEffect(() => {
-    if (!form.sub_category_id) return;
+    if (!form.sub_category_id) {
+      setAttributes([]);
+      return;
+    }
 
-    const fetchAttr = async () => {
-      const res = await api.get(`/subcategories/${form.sub_category_id}`);
+    const fetchAttributes = async () => {
+      try {
+        const res = await api.get(
+          `/subcategories/${form.sub_category_id}`
+        );
 
-      setAttributes(
-        (res.data.attributes || []).map((attr) => ({
-          ...attr,
-          value: "",
-        }))
-      );
+        setAttributes(
+          (res.data.attributes || []).map((attr) => ({
+            ...attr,
+            value: "",
+          }))
+        );
+      } catch (err) {
+        console.error(err);
+      }
     };
 
-    fetchAttr();
+    fetchAttributes();
   }, [form.sub_category_id]);
 
-  const handleChange = (e) => {
+  const handleChange = async (e) => {
     const { name, value, files } = e.target;
 
-      setErrors((prev) => ({
-        ...prev,
-        [name]: "",
-      }));
-
+    setErrors((prev) => ({
+      ...prev,
+      [name]: "",
+    }));
 
     if (name === "cover_image") {
       const file = files[0];
-      setForm({ ...form, cover_image: file });
-      setPreview(file ? URL.createObjectURL(file) : null);
+
+      if (!file) return;
+
+      setImageLoading(true);
+
+      const options = {
+        maxSizeMB: 0.5,
+        maxWidthOrHeight: 1280,
+        useWebWorker: true,
+      };
+
+      try {
+        const compressedFile = await imageCompression(file, options);
+
+        setForm((prev) => ({
+          ...prev,
+          cover_image: compressedFile,
+        }));
+
+        setPreview(URL.createObjectURL(compressedFile));
+
+        setErrors((prev) => ({
+          ...prev,
+          cover_image: "",
+        }));
+      } catch (error) {
+        console.error("Image compression error:", error);
+
+        setErrors((prev) => ({
+          ...prev,
+          cover_image: "ছবি compress করতে সমস্যা হয়েছে",
+        }));
+      } finally {
+        setImageLoading(false);
+      }
     } else {
-      setForm({ ...form, [name]: value });
+      setForm((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
     }
   };
 
@@ -103,39 +163,53 @@ const PropertyPost = () => {
   };
 
   const validate = () => {
-      let newErrors = {};
+    let newErrors = {};
 
-      if (!form.category_id) newErrors.category_id = "ক্যাটাগরি নির্বাচন করুন";
-      if (!form.sub_category_id) newErrors.sub_category_id = "সাব ক্যাটাগরি নির্বাচন করুন";
-      if (!form.title) newErrors.title = "শিরোনাম লিখুন";
+    if (!form.category_id)
+      newErrors.category_id = "ক্যাটাগরি নির্বাচন করুন";
 
-      if (form.purpose === "rent" && !form.rent_amount) {
-        newErrors.rent_amount = "ভাড়ার পরিমাণ দিন";
-      }
+    if (!form.sub_category_id)
+      newErrors.sub_category_id = "সাব ক্যাটাগরি নির্বাচন করুন";
 
-      if (form.purpose === "sell" && !form.sell_price) {
-        newErrors.sell_price = "বিক্রয় মূল্য দিন";
-      }
+    if (!form.title)
+      newErrors.title = "শিরোনাম লিখুন";
 
-      if (!form.division) newErrors.division = "বিভাগ লিখুন";
-      if (!form.district) newErrors.district = "জেলা লিখুন";
-      if (!form.area) newErrors.area = "এলাকা লিখুন";
-      if (!form.address) newErrors.address = "ঠিকানা লিখুন";
+    if (form.purpose === "rent" && !form.rent_amount) {
+      newErrors.rent_amount = "ভাড়ার পরিমাণ দিন";
+    }
 
-      if (!form.contact_name) newErrors.contact_name = "নাম দিন";
-      if (!form.contact_phone) newErrors.contact_phone = "মোবাইল নাম্বার দিন";
+    if (form.purpose === "sell" && !form.sell_price) {
+      newErrors.sell_price = "বিক্রয় মূল্য দিন";
+    }
 
-      if (!form.cover_image) {
-        newErrors.cover_image = "প্রোপার্টির ছবি দেওয়া বাধ্যতামূলক";
-      } else if (!form.cover_image.type.startsWith("image/")) {
-        newErrors.cover_image = "শুধু image ফাইল দিন";
-      } else if (form.cover_image.size > 2 * 1024 * 1024) {
-        newErrors.cover_image = "ছবি 2MB এর কম হতে হবে";
-      }
+    if (!form.division)
+      newErrors.division = "বিভাগ লিখুন";
 
-      setErrors(newErrors);
+    if (!form.district)
+      newErrors.district = "জেলা লিখুন";
 
-      return Object.keys(newErrors).length === 0;
+    if (!form.area)
+      newErrors.area = "এলাকা লিখুন";
+
+    if (!form.address)
+      newErrors.address = "ঠিকানা লিখুন";
+
+    if (!form.contact_name)
+      newErrors.contact_name = "নাম দিন";
+
+    if (!form.contact_phone)
+      newErrors.contact_phone = "মোবাইল নাম্বার দিন";
+
+    if (!form.cover_image) {
+      newErrors.cover_image =
+        "প্রোপার্টির ছবি দেওয়া বাধ্যতামূলক";
+    } else if (!form.cover_image.type.startsWith("image/")) {
+      newErrors.cover_image = "শুধু image ফাইল দিন";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
@@ -149,34 +223,38 @@ const PropertyPost = () => {
       const formData = new FormData();
 
       Object.keys(form).forEach((key) => {
-        if (form[key]) formData.append(key, form[key]);
+        if (form[key]) {
+          formData.append(key, form[key]);
+        }
       });
 
-      formData.append("attributes", JSON.stringify(attributes));
+      formData.append(
+        "attributes",
+        JSON.stringify(attributes)
+      );
 
       await api.post("/properties", formData);
 
-      // ✅ Reset সব
       setForm(initialForm);
       setAttributes([]);
       setSubCategories([]);
       setPreview(null);
 
-      // 🔥 file input clear
       if (fileRef.current) {
         fileRef.current.value = "";
       }
 
-      alert("✅ পোস্ট সফলভাবে তৈরি হয়েছে!\n\n⚠️ অনুগ্রহ করে একই পোস্ট বারবার তৈরি করবেন না এবং কোনো ভুল বা মিথ্যা তথ্য শেয়ার করা থেকে বিরত থাকুন। এ ধরনের কার্যকলাপের জন্য আপনার অ্যাকাউন্ট সাময়িক বা স্থায়ীভাবে বন্ধ হয়ে যেতে পারে।");
+      alert(
+        "✅ পোস্ট সফলভাবে তৈরি হয়েছে!\n\n⚠️ অনুগ্রহ করে একই পোস্ট বারবার তৈরি করবেন না এবং কোনো ভুল বা মিথ্যা তথ্য শেয়ার করা থেকে বিরত থাকুন।"
+      );
 
       navigate("/show/my-posts");
-      
     } catch (err) {
       console.error(err);
       alert("❌ পোস্ট তৈরি করতে সমস্যা হয়েছে");
+    } finally {
+      setLoadingSubmit(false);
     }
-
-    setLoadingSubmit(false);
   };
 
   return (
@@ -332,10 +410,39 @@ const PropertyPost = () => {
                 </div>
 
                 <div className="col-12">
-                  <label htmlFor="cover_image">আপনার প্রোপার্টির ছবি দিন।</label>
-                  <input type="file" name="cover_image" className="form-control" ref={fileRef} onChange={handleChange} />
-                  {preview && <img src={preview} width="120" className="mt-2" />}
-                   {errors.cover_image && <small className="text-danger">{errors.cover_image}</small>}
+                  <label htmlFor="cover_image">
+                    আপনার প্রোপার্টির ছবি দিন।
+                  </label>
+
+                  <input
+                    type="file"
+                    name="cover_image"
+                    className="form-control"
+                    ref={fileRef}
+                    onChange={handleChange}
+                  />
+
+                  {imageLoading && (
+                    <small className="text-primary d-block mt-2">
+                      <span className="spinner-border spinner-border-sm me-2"></span>
+                      ছবি compress হচ্ছে...
+                    </small>
+                  )}
+
+                  {preview && (
+                    <img
+                      src={preview}
+                      width="120"
+                      className="mt-2"
+                      alt="Preview"
+                    />
+                  )}
+
+                  {errors.cover_image && (
+                    <small className="text-danger">
+                      {errors.cover_image}
+                    </small>
+                  )}
                 </div>
 
                <div className="col-12">
