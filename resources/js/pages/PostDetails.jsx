@@ -46,20 +46,22 @@ const PostDetails = () => {
   };
 
   const handleShare = async () => {
+    if (!post) return; // 🔥 guard
+
+    const shareUrl = `${window.location.origin}/share/post/${post.id}`;
+
     const shareData = {
       title: post.title,
       text: post.description || "Check this property",
-      url: window.location.href,
+      url: shareUrl,
     };
 
     try {
-      // Native Share (Mobile + Supported Browser)
       if (navigator.share) {
         await navigator.share(shareData);
       } else {
-        // Fallback → Copy URL
         await navigator.clipboard.writeText(shareData.url);
-        alert("Link copied! এখন যেকোনো জায়গায় paste করে share করতে পারো.");
+        alert("Link copied!");
       }
     } catch (err) {
       console.error("Share failed:", err);
@@ -223,6 +225,7 @@ const PostDetails = () => {
               <button
                 className="btn btn-success flex-fill rounded-pill d-flex align-items-center justify-content-center gap-2"
                 onClick={handleShare}
+                disabled={!post}
               >
                 🔗 <span>Share</span>
               </button>

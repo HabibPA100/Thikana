@@ -23,7 +23,7 @@
     <meta property="og:url" content="https://thikana.com/">
     <meta property="og:title" content="ঠিকানা | Thikana - Buy, Sell & Rent Property">
     <meta property="og:description" content="বাংলাদেশের সব ধরনের প্রপার্টি ভাড়া ও বিক্রির নির্ভরযোগ্য প্ল্যাটফর্ম">
-    <meta property="og:image" content="/logo.png">
+    <meta property="og:image" content="{{ asset('frontend/favicon/favicon-96x96.png') }}">
     <meta property="og:site_name" content="Thikana">
 
     <!-- Twitter -->
@@ -31,7 +31,7 @@
     <meta name="twitter:url" content="https://thikana.com/">
     <meta name="twitter:title" content="ঠিকানা | Thikana">
     <meta name="twitter:description" content="Buy, Sell & Rent Property in Bangladesh">
-    <meta name="twitter:image" content="/logo.png">
+    <meta name="twitter:image" content="{{ asset('frontend/favicon/favicon-96x96.png') }}">
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('frontend/favicon/favicon-96x96.png') }}" sizes="96x96" />

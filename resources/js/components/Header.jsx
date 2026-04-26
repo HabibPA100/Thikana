@@ -13,7 +13,7 @@ function Header() {
         <div className="container">
 
           <Link to="/" className="text-decoration-none">
-            🏠 Home
+            🏠 Thikana
           </Link>
 
           <div className="ms-auto d-flex gap-2">
