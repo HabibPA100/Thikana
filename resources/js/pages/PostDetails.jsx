@@ -45,6 +45,27 @@ const PostDetails = () => {
     return visible + "****";
   };
 
+  const handleShare = async () => {
+    const shareData = {
+      title: post.title,
+      text: post.description || "Check this property",
+      url: window.location.href,
+    };
+
+    try {
+      // Native Share (Mobile + Supported Browser)
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        // Fallback → Copy URL
+        await navigator.clipboard.writeText(shareData.url);
+        alert("Link copied! এখন যেকোনো জায়গায় paste করে share করতে পারো.");
+      }
+    } catch (err) {
+      console.error("Share failed:", err);
+    }
+  };
+
   if (!post) {
     return (
       <AppLayout>
@@ -189,21 +210,31 @@ const PostDetails = () => {
           </div>
 
           {/* FOOTER */}
-          <div className="border-top p-3 d-flex gap-2">
+          <div className="border-top p-3">
+            <div className="d-flex flex-wrap gap-2">
 
-            <button className="btn btn-primary w-50 rounded-pill"
-            onClick={() => handleContact(post)}
-            >
-              📞 Contact Owner
-            </button>
-
-            <Link
-                to="/"
-                className="btn btn-outline-secondary w-50 rounded-pill d-flex align-items-center justify-content-center gap-2 shadow-sm"
+              <button
+                className="btn btn-primary flex-fill rounded-pill d-flex align-items-center justify-content-center gap-2"
+                onClick={() => handleContact(post)}
               >
-              ⬅️ Go Back
-            </Link>
+                📞 <span>Contact Owner</span>
+              </button>
 
+              <button
+                className="btn btn-success flex-fill rounded-pill d-flex align-items-center justify-content-center gap-2"
+                onClick={handleShare}
+              >
+                🔗 <span>Share</span>
+              </button>
+
+              <Link
+                to="/"
+                className="btn btn-outline-secondary flex-fill rounded-pill d-flex align-items-center justify-content-center gap-2 shadow-sm"
+              >
+                ⬅️ <span>Go Back</span>
+              </Link>
+
+            </div>
           </div>
 
         </div>
