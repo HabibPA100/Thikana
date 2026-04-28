@@ -19,6 +19,7 @@ const PropertyPost = () => {
   const [loadingSubmit, setLoadingSubmit] = useState(false);
 
   const initialForm = {
+    post_type: "",
     category_id: "",
     sub_category_id: "",
     title: "",
@@ -26,6 +27,7 @@ const PropertyPost = () => {
     purpose: "rent",
     rent_amount: "",
     sell_price: "",
+    expected_budget: "",
     division: "",
     district: "",
     area: "",
@@ -101,6 +103,14 @@ const PropertyPost = () => {
     fetchAttributes();
   }, [form.sub_category_id]);
 
+  useEffect(() => {
+    if (form.post_type === "owner") {
+      setForm(prev => ({ ...prev, purpose: "rent" }));
+    } else if (form.post_type) {
+      setForm(prev => ({ ...prev, purpose: "wanted" }));
+    }
+  }, [form.post_type]);
+
   const handleChange = async (e) => {
     const { name, value, files } = e.target;
 
@@ -165,6 +175,9 @@ const PropertyPost = () => {
   const validate = () => {
     let newErrors = {};
 
+    if (!form.post_type)
+      newErrors.post_type = "পোস্ট টাইপ নির্বাচন করুন";
+
     if (!form.category_id)
       newErrors.category_id = "ক্যাটাগরি নির্বাচন করুন";
 
@@ -174,12 +187,16 @@ const PropertyPost = () => {
     if (!form.title)
       newErrors.title = "শিরোনাম লিখুন";
 
-    if (form.purpose === "rent" && !form.rent_amount) {
+    if (form.post_type === "owner" && form.purpose === "rent" && !form.rent_amount) {
       newErrors.rent_amount = "ভাড়ার পরিমাণ দিন";
     }
 
-    if (form.purpose === "sell" && !form.sell_price) {
+    if (form.post_type === "owner" && form.purpose === "sell" && !form.sell_price) {
       newErrors.sell_price = "বিক্রয় মূল্য দিন";
+    }
+
+    if (form.post_type !== "owner" && !form.expected_budget) {
+      newErrors.expected_budget = "আপনার বাজেট লিখুন";
     }
 
     if (!form.division)
@@ -200,12 +217,21 @@ const PropertyPost = () => {
     if (!form.contact_phone)
       newErrors.contact_phone = "মোবাইল নাম্বার দিন";
 
-    if (!form.cover_image) {
-      newErrors.cover_image =
-        "প্রোপার্টির ছবি দেওয়া বাধ্যতামূলক";
-    } else if (!form.cover_image.type.startsWith("image/")) {
+    if (form.post_type === "owner" && !form.cover_image) {
+      newErrors.cover_image = "প্রোপার্টির ছবি দেওয়া বাধ্যতামূলক";
+    } else if (
+      form.cover_image &&
+      !form.cover_image.type?.startsWith("image/")
+    ) {
       newErrors.cover_image = "শুধু image ফাইল দিন";
     }
+
+    if (
+  form.post_type !== "owner" &&
+    (!form.description || form.description.trim() === "")
+  ) {
+    newErrors.description = "বিবরণ দেওয়া বাধ্যতামূলক";
+  }
 
     setErrors(newErrors);
 
@@ -223,7 +249,7 @@ const PropertyPost = () => {
       const formData = new FormData();
 
       Object.keys(form).forEach((key) => {
-        if (form[key]) {
+        if (form[key] !== null && form[key] !== "") {
           formData.append(key, form[key]);
         }
       });
@@ -251,6 +277,7 @@ const PropertyPost = () => {
       navigate("/show/my-posts");
     } catch (err) {
       console.error(err);
+      console.log("DATA:", err.response?.data);
       alert("❌ পোস্ট তৈরি করতে সমস্যা হয়েছে");
     } finally {
       setLoadingSubmit(false);
@@ -268,6 +295,22 @@ const PropertyPost = () => {
           <div className="card-body">
             <form onSubmit={handleSubmit}>
               <div className="row g-3">
+
+                <div className="col-md-6">
+                  <label>আপনি কে?</label>
+                  <select
+                    className="form-select"
+                    name="post_type"
+                    value={form.post_type}
+                    onChange={handleChange}
+                  >
+                    <option value="">নির্বাচন করুন</option>
+                    <option value="owner">আমি প্রোপার্টির মালিক</option>
+                    <option value="tenant">আমি ভাড়ার জন্য প্রোপার্টি খুঁজছি</option>
+                    <option value="buyer">আমি কেনার জন্য প্রোপার্টি খুঁজছি</option>
+                  </select>
+                  {errors.post_type && <small className="text-danger">{errors.post_type}</small>}
+                </div>
 
                 <div className="col-md-6">
                   <label>ক্যাটাগরি</label>
@@ -318,21 +361,36 @@ const PropertyPost = () => {
                 </div>
 
                 <div className="col-md-6">
-                  <label htmlFor="purpose"> আপনি কি ভাড়া না বিক্রি করতে চান ? </label>
+                  <label htmlFor="purpose">
+                    {form.post_type === "owner"
+                      ? "আপনি কি ভাড়া না বিক্রি করতে চান ?"
+                      : "আপনি কী খুঁজছেন ?"}
+                  </label>
+
                   <select
                     className="form-select"
                     name="purpose"
                     value={form.purpose}
                     onChange={handleChange}
                   >
-                    <option value="rent">ভাড়া</option>
-                    <option value="sell">বিক্রি</option>
+                    {form.post_type === "owner" ? (
+                      <>
+                        <option value="rent">ভাড়া</option>
+                        <option value="sell">বিক্রি</option>
+                      </>
+                    ) : (
+                      <option value="wanted">হ্যা আমি খুজছি।</option>
+                    )}
                   </select>
                 </div>
 
-                {form.purpose === "rent" && (
+                {/* শুধুমাত্র owner হলে rent/sell amount দেখাবে */}
+                {form.post_type === "owner" && form.purpose === "rent" && (
                   <div className="col-md-6">
-                    <label htmlFor="rent_amount"> ভাড়ার পরিমাণ কত ? </label>
+                    <label htmlFor="rent_amount">
+                      ভাড়ার পরিমাণ কত ?
+                    </label>
+
                     <input
                       type="number"
                       name="rent_amount"
@@ -341,13 +399,21 @@ const PropertyPost = () => {
                       value={form.rent_amount}
                       onChange={handleChange}
                     />
-                    {errors.rent_amount && <small className="text-danger">{errors.rent_amount}</small>}
+
+                    {errors.rent_amount && (
+                      <small className="text-danger">
+                        {errors.rent_amount}
+                      </small>
+                    )}
                   </div>
                 )}
 
-                {form.purpose === "sell" && (
+                {form.post_type === "owner" && form.purpose === "sell" && (
                   <div className="col-md-6">
-                    <label htmlFor="sell_price"> বিক্রয় মূল্য কত ? </label>
+                    <label htmlFor="sell_price">
+                      বিক্রয় মূল্য কত ?
+                    </label>
+
                     <input
                       type="number"
                       name="sell_price"
@@ -356,7 +422,37 @@ const PropertyPost = () => {
                       value={form.sell_price}
                       onChange={handleChange}
                     />
-                    {errors.sell_price && <small className="text-danger">{errors.sell_price}</small>}
+
+                    {errors.sell_price && (
+                      <small className="text-danger">
+                        {errors.sell_price}
+                      </small>
+                    )}
+                  </div>
+                )}
+
+
+                {/* owner না হলে expected budget field দেখাবে */}
+                {form.post_type !== "owner" && (
+                  <div className="col-md-6">
+                    <label htmlFor="expected_budget">
+                      আপনার বাজেট কত ?
+                    </label>
+
+                    <input
+                      type="number"
+                      name="expected_budget"
+                      className="form-control"
+                      placeholder="আপনার বাজেট লিখুন"
+                      value={form.expected_budget}
+                      onChange={handleChange}
+                    />
+
+                    {errors.expected_budget && (
+                      <small className="text-danger">
+                        {errors.expected_budget}
+                      </small>
+                    )}
                   </div>
                 )}
 
@@ -456,6 +552,7 @@ const PropertyPost = () => {
                     onChange={handleChange}
                     rows={4}
                   />
+                  {errors.description && <small className="text-danger">{errors.description}</small>}
                 </div>
 
                 {attributes.map((attr) => (

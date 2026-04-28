@@ -5,11 +5,13 @@ import DashboardLayout from "../../layouts/DashboardLayout";
 const initialFormState = {
   category_id: "",
   sub_category_id: "",
+  post_type: "",
   title: "",
   description: "",
   purpose: "",
   rent_amount: "",
   sell_price: "",
+  expected_budget: "",
   area: "",
   cover_image: null,
 };
@@ -62,9 +64,16 @@ const ShowMyPosts = () => {
 
     setForm({
       ...initialFormState,
-      ...post,
       category_id: String(post.category_id),
       sub_category_id: String(post.sub_category_id),
+      post_type: post.post_type || "",
+      title: post.title || "",
+      description: post.description || "",
+      purpose: post.purpose || "",
+      rent_amount: post.rent_amount || "",
+      sell_price: post.sell_price || "",
+      expected_budget: post.expected_budget || "",
+      area: post.area || "",
       cover_image: null,
     });
 
@@ -107,7 +116,11 @@ const ShowMyPosts = () => {
       const file = files[0];
       if (file) {
         setForm((prev) => ({ ...prev, cover_image: file }));
-        setPreview(URL.createObjectURL(file));
+        const url = URL.createObjectURL(file);
+        setPreview(url);
+
+        // cleanup later (optional advanced)
+        URL.revokeObjectURL(url);
       }
       return;
     }
@@ -130,7 +143,7 @@ const ShowMyPosts = () => {
       const formData = new FormData();
 
       Object.keys(form).forEach((key) => {
-        if (form[key] !== null && form[key] !== undefined) {
+        if (form[key] !== null && form[key] !== undefined && form[key] !== "") {
           formData.append(key, form[key]);
         }
       });
@@ -148,6 +161,8 @@ const ShowMyPosts = () => {
       fetchPosts();
     } catch (err) {
       console.error(err);
+      // console.log("DATA:", err.response?.data);
+      console.log('DATA', err.response?.data);
       alert("❌ Update failed");
     }
   };
@@ -200,6 +215,13 @@ const ShowMyPosts = () => {
                       value={form.sub_category_id}
                     />
 
+                  {/* Post Type */}
+                  <input
+                    type="hidden"
+                    name="post_type"
+                    value={form.post_type}
+                  />
+
                   {/* TITLE */}
                   <div className="col-md-6">
                     <label>Title</label>
@@ -222,6 +244,7 @@ const ShowMyPosts = () => {
                     >
                       <option value="rent">Rent</option>
                       <option value="sell">Sell</option>
+                      <option value="wanted">Wanted</option>
                     </select>
                   </div>
 
@@ -247,6 +270,19 @@ const ShowMyPosts = () => {
                         className="form-control"
                         name="sell_price"
                         value={form.sell_price || ""}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  )}
+
+                  {form.purpose === "wanted" && (
+                    <div className="col-md-6">
+                      <label>Expected Budget</label>
+                      <input
+                        type="number"
+                        className="form-control"
+                        name="expected_budget"
+                        value={form.expected_budget || ""}
                         onChange={handleChange}
                       />
                     </div>
@@ -347,7 +383,9 @@ const ShowMyPosts = () => {
 
                         <td>
                           <span className="badge bg-primary-subtle text-primary border border-primary">
-                            {p.rent_amount || p.sell_price}
+                            {p.purpose === "rent" && p.rent_amount}
+                            {p.purpose === "sell" && p.sell_price}
+                            {p.purpose === "wanted" && p.expected_budget}
                           </span>
                         </td>
 

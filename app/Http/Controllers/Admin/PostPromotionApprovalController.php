@@ -27,7 +27,7 @@ class PostPromotionApprovalController extends Controller
         $plan = $req->promotionPlan;
 
         $req->update([
-            'status' => 'approved',
+            'status' => 'active',
             'starts_at' => now(),
             'expires_at' => now()->addDays($plan->duration_days),
         ]);

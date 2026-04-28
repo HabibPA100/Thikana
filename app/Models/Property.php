@@ -12,12 +12,14 @@ class Property extends Model
 
     protected $fillable = [
         'user_id',
+        'post_type',
         'sub_category_id',
         'title',
         'description',
         'purpose',
         'rent_amount',
         'sell_price',
+        'expected_budget',
         'division',
         'district',
         'area',

@@ -13,7 +13,12 @@ function Header() {
         <div className="container">
 
           <Link to="/" className="text-decoration-none">
-            🏠 Thikana
+            <img
+              src="/frontend/favicon/favicon-96x96.png" 
+              alt="Home"
+              className="rounded-circle"
+              style={{ width: "40px", height: "40px", objectFit: "cover" }}
+            />
           </Link>
 
           <div className="ms-auto d-flex gap-2">

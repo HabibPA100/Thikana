@@ -55,13 +55,15 @@ class PropertyPostController extends Controller
         try {
 
             $data = $request->validate([
+                'post_type' => 'required|string',
                 'sub_category_id' => 'required|exists:sub_categories,id',
                 'title' => 'required|string|max:255',
-                'description' => 'nullable|string',
+                'description' => 'required_unless:post_type,owner|nullable|string',
 
-                'purpose' => 'required|in:rent,sell',
+                'purpose' => 'required|in:rent,sell,wanted',
                 'rent_amount' => 'nullable|numeric',
                 'sell_price' => 'nullable|numeric',
+                'expected_budget' => 'nullable|numeric',
 
                 'division' => 'required|string',
                 'district' => 'required|string',
@@ -72,14 +74,19 @@ class PropertyPostController extends Controller
                 'contact_phone' => 'required|string',
                 'contact_email' => 'nullable|email',
 
-                'cover_image' => 'required|image|max:2048',
+                'cover_image' => 'required_if:post_type,owner|nullable|image|max:2048',
             ]);
 
             // PURPOSE FIX
             if ($data['purpose'] === 'rent') {
                 $data['sell_price'] = null;
-            } else {
+                $data['expected_budget'] = null;
+            } elseif ($data['purpose'] === 'sell') {
                 $data['rent_amount'] = null;
+                $data['expected_budget'] = null;
+            } elseif ($data['purpose'] === 'wanted') {
+                $data['rent_amount'] = null;
+                $data['sell_price'] = null;
             }
 
             // IMAGE UPLOAD
@@ -122,24 +129,26 @@ class PropertyPostController extends Controller
             $property = Property::where('user_id', Auth::id())->findOrFail($id);
 
             $data = $request->validate([
+                'post_type' => 'required|string',
                 'sub_category_id' => 'required|exists:sub_categories,id',
-                'title' => 'required|string|max:255',
-                'description' => 'nullable|string',
+                'title' => 'sometimes|required|string|max:255',
+                'description' => 'sometimes|required_unless:post_type,owner|nullable|string',
 
-                'purpose' => 'required|in:rent,sell',
+                'purpose' => 'required|in:rent,sell,wanted',
                 'rent_amount' => 'nullable|numeric',
                 'sell_price' => 'nullable|numeric',
+                'expected_budget' => 'nullable|numeric',
 
-                'division' => 'required|string',
-                'district' => 'required|string',
-                'area' => 'required|string',
-                'address' => 'required|string',
+                'division' => 'sometimes|required|string',
+                'district' => 'sometimes|required|string',
+                'area' => 'sometimes|required|string',
+                'address' => 'sometimes|required|string',
 
-                'contact_name' => 'required|string',
-                'contact_phone' => 'required|string',
+                'contact_name' => 'sometimes|required|string',
+                'contact_phone' => 'sometimes|required|string',
                 'contact_email' => 'nullable|email',
 
-                'cover_image' => 'nullable|image|max:2048',
+                'cover_image' => 'sometimes|required_if:post_type,owner|nullable|image|max:2048',
             ]);
 
             // 🔥 IMAGE UPDATE

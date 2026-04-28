@@ -22,7 +22,7 @@ class PostPromotionRequestController extends Controller
         ]);
 
         $exists = PostPromotionRequest::where('property_id', $request->post_id)
-            ->where('status', 'pending')
+            ->where('status', 'draft')
             ->first();
 
         if ($exists) {

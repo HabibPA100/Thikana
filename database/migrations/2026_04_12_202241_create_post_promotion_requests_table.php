@@ -21,7 +21,14 @@ return new class extends Migration
             $table->timestamp('starts_at')->nullable();
             $table->timestamp('expires_at')->nullable();
 
-            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+             $table->enum('status', [
+                                'draft',
+                                'pending',
+                                'active',
+                                'paused',
+                                'expired',
+                                'rejected'
+                            ])->default('draft');
 
             // Payment phone number field
             $table->string('payment_number')->nullable();

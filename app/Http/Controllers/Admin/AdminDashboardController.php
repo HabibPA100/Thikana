@@ -69,7 +69,7 @@ class AdminDashboardController extends Controller
 
     public function revenue()
     {
-        $totalRevenue = PostPromotionRequest::where('status', 'approved')
+        $totalRevenue = PostPromotionRequest::where('status', 'active')
                             ->sum('payment_amount');
 
         return response()->json([

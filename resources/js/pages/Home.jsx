@@ -227,6 +227,7 @@ const Home = () => {
                   <option value="">Select Purpose</option>
                   <option value="rent">🏠 For Rent</option>
                   <option value="sell">💰 For Sale</option>
+                  <option value="wanted">🔍 Wanted</option>
                 </select>
 
                 {/* Buttons */}
@@ -275,14 +276,14 @@ const Home = () => {
                  >
               <div className="card-body d-flex align-items-center">
                 <img
-                  src="https://i.pravatar.cc/50"
+                  src="/frontend/camera.jpg"
                   className="rounded-circle me-2"
                   width="45"
                 />
                 <input
                   type="text"
                   className="form-control"
-                  placeholder="Post your rental..."
+                  placeholder="Post your prope..."
                 />
               </div>
             </div>
@@ -338,16 +339,14 @@ const Home = () => {
                   </div>
 
                   {/* Image */}
-                  <img
-                    src={
-                      post.cover_image
-                        ? `${import.meta.env.VITE_API_BASE}/storage/${post.cover_image}`
-                        : "https://picsum.photos/600/350"
-                    }
-                    className="img-fluid"
-                    style={{ maxHeight: "320px", objectFit: "cover" }}
-                    alt={post.title}
-                  />
+                 {post?.cover_image && (
+                    <img
+                      src={`${import.meta.env.VITE_API_BASE}/storage/${post.cover_image}`}
+                      className="img-fluid"
+                      style={{ maxHeight: "320px", objectFit: "cover" }}
+                      alt={post?.title}
+                    />
+                  )}
 
                   {/* Content */}
                   <div className="card-body pt-3">
@@ -365,21 +364,49 @@ const Home = () => {
                     </div>
 
                     {/* Price */}
-                    <div className="d-flex justify-content-between align-items-center mt-3">
+                   <div className="d-flex justify-content-between align-items-center mt-3">
                       <h6 className="fw-bold text-success mb-0">
-                        💰 ৳ {post.sell_price || post.rent_amount}{" "}
-                        {post.purpose === "sell" ? "/ বিক্রয় মূল্য" : "/ মাসিক ভাড়া"} 
+                        💰 ৳ {
+                          post.purpose === "sell"
+                            ? post.sell_price
+                            : post.purpose === "rent"
+                            ? post.rent_amount
+                            : post.expected_budget
+                        }{" "}
+                        {
+                          post.purpose === "sell"
+                            ? "/ বিক্রয় মূল্য"
+                            : post.purpose === "rent"
+                            ? "/ মাসিক ভাড়া"
+                            : "/ বাজেট"
+                        }
                       </h6>
 
                       <span
                         className="small px-3 py-1 rounded-pill fw-semibold"
                         style={{
-                          backgroundColor: post.purpose === "sell" ? "#ffe5e5" : "#e0f3ff",
-                          color: post.purpose === "sell" ? "#d11a2a" : "#0077b6",
+                          backgroundColor:
+                            post.purpose === "sell"
+                              ? "#ffe5e5"
+                              : post.purpose === "rent"
+                              ? "#e0f3ff"
+                              : "#e6ffe6",
+                          color:
+                            post.purpose === "sell"
+                              ? "#d11a2a"
+                              : post.purpose === "rent"
+                              ? "#0077b6"
+                              : "#2d6a4f",
                           display: "inline-block"
                         }}
                       >
-                        {post.purpose === "sell" ? "For Sale" : "For Rent"}
+                        {
+                          post.purpose === "sell"
+                            ? "For Sale"
+                            : post.purpose === "rent"
+                            ? "For Rent"
+                            : "Wanted/খুজছেন"
+                        }
                       </span>
                     </div>
 
@@ -545,7 +572,7 @@ const Home = () => {
                 <h6 className="fw-bold mb-3">📍 Popular Areas</h6>
 
                 <div className="d-flex flex-wrap gap-2">
-                  {["Uttara", "Mirpur", "Dhanmondi", "Bashundhara","Gopalgonj"].map((area) => (
+                  {["Uttara", "Mirpur", "Dhanmondi", "Bashundhara","Gopalganj"].map((area) => (
                     <span
                       key={area}
                       className="badge rounded-pill bg-light text-dark border px-3 py-2 area-chip"

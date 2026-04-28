@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->string('rent_amount')->nullable();
             $table->string('sell_price')->nullable();
+            $table->string('expected_budget')->nullable();
 
             // LOCATION
             $table->string('division');
@@ -51,7 +52,8 @@ return new class extends Migration
             $table->timestamp('promotion_expires_at')->nullable();
 
             // STATUS
-            $table->enum('purpose', ['rent', 'sell']);
+            $table->enum('post_type', ['owner', 'tenant','buyer'])->nullable();
+            $table->enum('purpose', ['rent', 'sell','wanted']);
             $table->enum('status', ['Active', 'Rented', 'Rejected'])->default('Active');
 
             $table->boolean('is_featured')->default(false);
@@ -62,7 +64,7 @@ return new class extends Migration
 
             // INDEX
             $table->index(['district', 'area']);
-            $table->index(['rent_amount', 'sell_price']);
+            $table->index(['rent_amount', 'sell_price','expected_budget']);
             $table->index(['status', 'is_available']);
         });
     }

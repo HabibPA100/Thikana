@@ -87,7 +87,7 @@ class AuthController extends Controller
                 Auth::logout(); // 🔥 important
 
                 return response()->json([
-                    'message' => 'আপনার একাউন্টটি সাময়িকভাবে বন্ধ আছে। অনুগ্রহ করে এডমিনের সাথে যোগাযোগ করুন।'
+                    'message' => 'আপনার একাউন্টটি সাময়িকভাবে বন্ধ আছে। অনুগ্রহ করে এডমিনের সাথে যোগাযোগ করুন। mail to => mythikana360@gmail.com'
                 ], 403);
             }
 
@@ -95,7 +95,7 @@ class AuthController extends Controller
                 Auth::logout(); // 🔥 important
 
                 return response()->json([
-                    'message' => 'আমাদের প্ল্যাটফর্মের নিয়ম বার বার লঙ্ঘন করায় আপনার একাউন্টটি suspend করা হয়েছে।'
+                    'message' => 'আমাদের প্ল্যাটফর্মের নিয়ম বার বার লঙ্ঘন করায় আপনার একাউন্টটি suspend করা হয়েছে। mail to => mythikana360@gmail.com'
                 ], 403);
             }
 

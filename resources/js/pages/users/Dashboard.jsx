@@ -96,10 +96,15 @@ const Dashboard = () => {
 
                     {properties.map((item) => {
 
-                      const price =
-                        item.purpose === "sell"
-                          ? item.sell_price
-                          : item.rent_amount;
+                      let price = "";
+
+                      if (item.purpose === "sell") {
+                        price = item.sell_price;
+                      } else if (item.purpose === "rent") {
+                        price = item.rent_amount;
+                      } else if (item.purpose === "wanted") {
+                        price = item.expected_budget;
+                      }
 
                       return (
                         <div key={item.id} className="card shadow border-0">
