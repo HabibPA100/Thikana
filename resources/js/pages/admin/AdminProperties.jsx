@@ -89,7 +89,7 @@ function AdminProperties() {
                       {/* Price */}
                       <td>
                         <span className="badge bg-success-subtle text-success fs-6 px-3 py-2">
-                          ৳ {p.sell_price || p.rent_amount}
+                          ৳ {p.sell_price || p.rent_amount || p.expected_budget}
                         </span>
                       </td>
 

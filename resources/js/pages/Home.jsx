@@ -536,7 +536,7 @@ const Home = () => {
                           : item.title}
                       </h6>
                       <small className="text-primary fw-semibold">
-                        ৳ {item.rent_amount || item.sell_price}
+                        ৳ {item.rent_amount || item.sell_price || item.expected_budget}
                       </small>
                     </div>
                   </div>
