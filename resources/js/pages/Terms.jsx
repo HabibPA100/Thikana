@@ -12,7 +12,7 @@ const Terms = () => {
               {/* Header */}
               <div className="text-center mb-5">
                 <h2 className="fw-bold text-primary">
-                  📜 Thikana – Terms & Conditions
+                  📜 Prio Thikana – Terms & Conditions
                 </h2>
                 <p className="text-muted">
                   প্ল্যাটফর্ম ব্যবহারের আগে শর্তাবলী ভালোভাবে পড়ুন
@@ -23,7 +23,7 @@ const Terms = () => {
               <div className="mb-4 p-4 bg-light rounded-3">
                 <h5 className="fw-bold mb-3">📌 ১. ভূমিকা</h5>
                 <p className="mb-0">
-                  Thikana একটি অনলাইন প্ল্যাটফর্ম যেখানে ব্যবহারকারীরা প্রপার্টি
+                  Prio Thikana একটি অনলাইন প্ল্যাটফর্ম যেখানে ব্যবহারকারীরা প্রপার্টি
                   ভাড়া বা বিক্রির জন্য তথ্য প্রকাশ করতে পারেন। এটি শুধুমাত্র তথ্য
                   বিনিময়ের মাধ্যম।
                 </p>
@@ -43,7 +43,7 @@ const Terms = () => {
               <div className="mb-4 p-4 bg-light rounded-3">
                 <h5 className="fw-bold mb-3">💰 ৩. লেনদেন সংক্রান্ত নীতি</h5>
                 <ul className="mb-0">
-                  <li>Thikana কোন আর্থিক লেনদেন পরিচালনা করে না</li>
+                  <li>Prio Thikana কোন আর্থিক লেনদেন পরিচালনা করে না</li>
                   <li>ব্যবহারকারীরা নিজেরা যোগাযোগ করে লেনদেন করবেন</li>
                   <li>অগ্রিম দেওয়ার আগে যাচাই করা বাধ্যতামূলক</li>
                 </ul>
@@ -53,7 +53,7 @@ const Terms = () => {
               <div className="mb-4 p-4 bg-light rounded-3">
                 <h5 className="fw-bold mb-3">⚠️ ৪. দায়বদ্ধতা সীমাবদ্ধতা</h5>
                 <ul className="mb-0">
-                  <li>প্রতারণা বা ক্ষতির জন্য Thikana দায়ী নয়</li>
+                  <li>প্রতারণা বা ক্ষতির জন্য Prio Thikana দায়ী নয়</li>
                   <li>তথ্যের সত্যতা ব্যবহারকারীর উপর নির্ভরশীল</li>
                 </ul>
               </div>

@@ -25,7 +25,7 @@ function Header() {
 
             {/* 🔍 Search Button */}
             <button
-              className="btn btn-primary"
+              className="btn btn-outline-danger"
               onClick={() => setShowModal(true)}
             >
               🔍 Search

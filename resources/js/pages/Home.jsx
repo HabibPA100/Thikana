@@ -569,7 +569,7 @@ const Home = () => {
                 <hr className="my-3" />
 
                 {/* Popular Areas */}
-                <h6 className="fw-bold mb-3">📍 Popular Areas</h6>
+                {/* <h6 className="fw-bold mb-3">📍 Popular Areas</h6>
 
                 <div className="d-flex flex-wrap gap-2">
                   {["Uttara", "Mirpur", "Dhanmondi", "Bashundhara","Gopalganj"].map((area) => (
@@ -586,7 +586,7 @@ const Home = () => {
                       📌 {area}
                     </span>
                   ))}
-                </div>
+                </div> */}
 
               </div>
             </div>

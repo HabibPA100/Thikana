@@ -12,7 +12,7 @@ const PrivacyPolicy = () => {
               {/* Header */}
               <div className="text-center mb-5">
                 <h2 className="fw-bold text-primary">
-                  🔐 Thikana – Privacy Policy
+                  🔐 Prio Thikana – Privacy Policy
                 </h2>
                 <p className="text-muted">
                   আপনার তথ্যের নিরাপত্তা আমাদের কাছে গুরুত্বপূর্ণ
@@ -73,7 +73,7 @@ const PrivacyPolicy = () => {
               <div className="mb-4 p-4 bg-light rounded-3">
                 <h5 className="fw-bold mb-3">🌐 ৭. তৃতীয় পক্ষের লিংক</h5>
                 <p className="mb-0">
-                  তৃতীয় পক্ষের লিংকের জন্য Thikana দায়ী নয়।
+                  তৃতীয় পক্ষের লিংকের জন্য Prio Thikana দায়ী নয়।
                 </p>
               </div>
 

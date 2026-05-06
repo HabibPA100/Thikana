@@ -4,12 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Primary SEO Meta If-->
-    <title>ঠিকানা | Thikana - Buy, Sell & Rent Property in Bangladesh</title>
-    <meta name="title" content="ঠিকানা | Thikana - Buy, Sell & Rent Property in Bangladesh">
-    <meta name="description" content="ঠিকানা (Thikana) বাংলাদেশের একটি আধুনিক রিয়েল এস্টেট প্ল্যাটফর্ম যেখানে আবাসিক, বাণিজ্যিক, জমি, অফিস, গুদামসহ সকল ধরনের প্রপার্টি ভাড়া বা বিক্রয় করা যায়।">
-    <meta name="keywords" content="Thikana, ঠিকানা, Real Estate Bangladesh, House Rent, Land Sale, Property Sell, Commercial Space, Bangladesh Property, Property Buy Sell">
-    <meta name="author" content="Thikana">
+    <!-- Primary SEO Meta -->
+    <title>প্রিয় ঠিকানা | Prio Thikana - Buy, Sell & Rent Property in Bangladesh</title>
+
+    <meta name="title" content="প্রিয় ঠিকানা | Prio Thikana - Buy, Sell & Rent Property in Bangladesh">
+
+    <meta name="description" content="প্রিয় ঠিকানা (PrioThikana.com) বাংলাদেশের একটি আধুনিক রিয়েল এস্টেট প্ল্যাটফর্ম যেখানে আবাসিক, বাণিজ্যিক, জমি, অফিস, গুদামসহ সকল ধরনের প্রপার্টি সহজে ভাড়া, বিক্রয় ও ক্রয় করা যায়।">
+
+    <meta name="keywords" content="Prio Thikana, Priothikana, প্রিয় ঠিকানা, Real Estate Bangladesh, House Rent BD, Land Sale BD, Property Buy Sell, Commercial Space BD, Bangladesh Property">
+
+    <meta name="author" content="PrioThikana">
     <meta name="robots" content="index, follow">
     <meta name="language" content="Bangla">
 
@@ -20,17 +24,23 @@
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://thikana.com/">
-    <meta property="og:title" content="ঠিকানা | Thikana - Buy, Sell & Rent Property">
-    <meta property="og:description" content="বাংলাদেশের সব ধরনের প্রপার্টি ভাড়া ও বিক্রির নির্ভরযোগ্য প্ল্যাটফর্ম">
+    <meta property="og:url" content="https://priothikana.com/">
+
+    <meta property="og:title" content="প্রিয় ঠিকানা | Prio Thikana - Buy, Sell & Rent Property">
+
+    <meta property="og:description" content="বাংলাদেশের নির্ভরযোগ্য রিয়েল এস্টেট প্ল্যাটফর্ম - সহজে প্রপার্টি ভাড়া, বিক্রয় ও ক্রয় করুন">
+
     <meta property="og:image" content="{{ asset('frontend/favicon/favicon-96x96.png') }}">
-    <meta property="og:site_name" content="Thikana">
+    <meta property="og:site_name" content="PrioThikana">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://thikana.com/">
-    <meta name="twitter:title" content="ঠিকানা | Thikana">
-    <meta name="twitter:description" content="Buy, Sell & Rent Property in Bangladesh">
+    <meta name="twitter:url" content="https://priothikana.com/">
+
+    <meta name="twitter:title" content="প্রিয় ঠিকানা | Prio Thikana">
+
+    <meta name="twitter:description" content="Buy, Sell & Rent Property in Bangladesh সহজেই PrioThikana.com এ">
+
     <meta name="twitter:image" content="{{ asset('frontend/favicon/favicon-96x96.png') }}">
 
     <!-- Favicon -->
@@ -41,7 +51,7 @@
     <link rel="manifest" href="{{ asset('frontend/favicon/site.webmanifest') }}" />
 
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://thikana.com/">
+    <link rel="canonical" href="https://priothikana.com/">
 
     <!-- Performance -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
